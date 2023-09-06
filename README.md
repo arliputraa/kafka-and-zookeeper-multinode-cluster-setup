@@ -1,17 +1,11 @@
 Setup Kafka Cluster and 3 instance Zookeeper
 
-# Kafka Broker Configuration:
-we are going to create 3 Kafka broker Instance in each server.
-
-
-
-
 # Zookeeper Configuration:
 We are going to create 3 zookeeper instance in each server.
 
 ## Creating the Zookeeper properties files 
 
-Edited for all 3 Zookeeper instance to file home/kafka/config/zookeeper.properties
+Edit for all Zookeeper instance in path file /home/kafka/config
 
     #server1
     mv zookeeper.properties zookeeper1.properties
@@ -46,11 +40,11 @@ Edited for all 3 Zookeeper instance to file home/kafka/config/zookeeper.properti
 
 ## Edit config file for 3 instance zookeeper.properties
 
-__Zookeeper-Instance-1:__ in file path kafka/config/
+* __Zookeeper-Instance-1:__ in file path /kafka/config
 
-    nano zookeeper1.properties 
+        nano zookeeper1.properties 
 
-(add the below configuration scripts)
+Add the below configuration scripts:
 
     dataDir=/home/devarli/kafka/data/zookeeper1
     clientPort=2181
@@ -63,11 +57,11 @@ __Zookeeper-Instance-1:__ in file path kafka/config/
     server.3=ipserver3:2668:3668
     maxClientCnxns=0
 
-__Zookeeper-Instance-2:__ in file path kafka/config/
+* __Zookeeper-Instance-2:__ in file path /kafka/config
 
-    nano zookeeper2.properties 
+        nano zookeeper2.properties 
 
-(add the below configuration scripts)
+Add the below configuration scripts:
 
     dataDir=/home/devarli/kafka/data/zookeeper2
     clientPort=2182
@@ -80,11 +74,11 @@ __Zookeeper-Instance-2:__ in file path kafka/config/
     server.3=ipserver3:2668:3668
     maxClientCnxns=0
 
-__Zookeeper-Instance-3:__ in file path kafka/config/
+* __Zookeeper-Instance-3:__ in file path kafka/config/
 
-    nano zookeeper3.properties 
+        nano zookeeper3.properties 
 
-(add the below configuration scripts)
+Add the below configuration scripts:
 
     dataDir=/home/devarli/kafka/data/zookeeper3
     clientPort=2183
@@ -100,7 +94,7 @@ __Zookeeper-Instance-3:__ in file path kafka/config/
 
 ## Create zookeeper systemd service IN EACH SERVER
 
-__#Server-1__
+__Server-1__
 
     sudo nano /etc/systemd/system/zookeeper.service
 
@@ -120,7 +114,111 @@ Append this:
     [Install]
     WantedBy=multi-user.target
 
-## Start zookeeper
+## After all has been setup restart the server
+
+    sudo reboot now
+
+
+# Kafka Broker Configuration:
+
+we are going to create 3 Kafka broker Instance in each server.
+
+## Creating the Server properties files
+
+Edit for all instance server.properties in path file /home/kafka/config
+
+    #server1
+    mv server.properties server1.properties
+    
+    #server2
+    mv server.properties server2.properties
+    
+    #server3
+    mv server.properties server3.properties
+
+## Edit config file for 3 instance server.properties
+
+* __Kafka Broker Instance 1:__ in file path /home/kafka/config
+
+        nano server1.properties
+   
+Add the below configuration scripts:
+
+    broker.id=0
+    log.dirs=/home/devarli/kafka/logs1
+    port=9093
+    advertised.host.name = ipserver1
+    zookeeper.connect=ipserver1:2181,ipserver2:2182,ipserver3:2183
+    delete.topic.enable = true
+
+Create the log directories in file path /home/kafka
+        
+    mkdir logs1
+
+* __Kafka Broker Instance 2:__ in file path /kafka/config
+
+        nano server2.properties 
+
+Add the below configuration scripts:
+
+    broker.id=1
+    log.dirs=/home/devarli/kafka/logs2
+    port=9094
+    advertised.host.name = ipserver2
+    zookeeper.connect=ipserver1:2181,ipserver2:2182,ipserver3:2183
+    delete.topic.enable = true
+
+Create the log directories in file path /home/kafka
+
+    mkdir logs2
+    
+* __Kafka Broker Instance 3:__ in file path /kafka/config
+
+        nano server3.properties 
+
+Add the below configuration scripts:
+
+    broker.id=2
+    log.dirs=/home/devarli/kafka/logs3
+    port=9095
+    advertised.host.name = ipserver3
+    zookeeper.connect=ipserver1:2181,ipserver2:2182,ipserver3:2183
+
+Create the log directories in file path /home/kafka
+        
+    mkdir logs3
+
+## Create kafka run as a services, FOR IN EACH SERVER
+
+__Server-1__
+
+    sudo nano /etc/systemd/system/kafka.service
+
+Append this:
+
+    [Unit]
+    Requires=zookeeper.service
+    After=zookeeper.service
+    
+    [Service]
+    Type=simple
+    User=devarli
+    ExecStart=/bin/sh -c '/home/devarli/kafka/bin/kafka-server-start.sh /home/devarli/kafka/config/server1.properties > /home/devarli/kafka/logs1/kafka.log 2>&1'
+    ExecStop=/home/devarli/kafka/bin/kafka-server-stop.sh
+    Restart=on-abnormal
+    
+    [Install]
+    WantedBy=multi-user.target
+
+## After all has been setup restart the server
+
+    sudo reboot now
+
+## Reload systemd configuration
+
+    sudo systemctl daemon-reload
+
+## Start zookeeper in each server
 
 In path file /kafka/bin
 
@@ -129,6 +227,20 @@ In path file /kafka/bin
 Check status zookeeper
 
     systemctl status zookeeper.service
+
+## Start kafka in each server
+
+In path file /kafka/bin
+
+    systemctl start kafka
+
+## Check status kafka
+
+    systemctl status kafka
+
+
+
+
 
 
 
