@@ -1,4 +1,4 @@
-Setup Kafka Cluster and 3 instance Zookeeper
+Setup Kafka Cluster with 3 instance Zookeeper
 
 # Zookeeper Configuration:
 We are going to create 3 zookeeper instance in each server.
@@ -224,9 +224,13 @@ In path file /kafka/bin
 
     systemctl start zookeeper.service
 
+![image](https://github.com/arliputraa/kafka-and-zookeeper-multinode-cluster-setup/assets/110078907/eb2d9129-ec42-4618-9aa3-0b9bd9d25a6a)
+
 Check status zookeeper
 
     systemctl status zookeeper.service
+
+![image](https://github.com/arliputraa/kafka-and-zookeeper-multinode-cluster-setup/assets/110078907/5dfe9d83-2a20-41b7-95c1-d7d2733239cb)
 
 ## Start kafka in each server
 
@@ -234,10 +238,13 @@ In path file /kafka/bin
 
     systemctl start kafka
 
+![image](https://github.com/arliputraa/kafka-and-zookeeper-multinode-cluster-setup/assets/110078907/a6f7991c-0e7b-4bb3-90b4-600d7ec573f7)
+
 ## Check status kafka
 
     systemctl status kafka
 
+![image](https://github.com/arliputraa/kafka-and-zookeeper-multinode-cluster-setup/assets/110078907/8d649833-c6f7-4926-bae1-286f28404c8b)
 
 
 
